@@ -18,7 +18,8 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
-	
+	// https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on
+	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.65'
 	
 }
 
