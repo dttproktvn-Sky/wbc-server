@@ -12,17 +12,13 @@ public class LoginController {
     public APIResult getConfig(@RequestBody UserInfo userInfor){
         if (userInfor.getUid()!= null){
             System.out.println("UserId: "+userInfor.getUid());
-            System.out.println("hassPassword: "+userInfor.getHashPassword());
-            System.out.println("plaintext: "+userInfor.getPlaintext());
-            System.out.println("encrypted: "+userInfor.getEncrypted());
+            System.out.println("hassPassword: "+userInfor.getHashPassword());            
             AESEncryption aesEncryption= new AESEncryption();
             byte[] keyBytes= new byte[]{(byte)0x4a, (byte)0x2d, (byte)0x1d, (byte)0x65, (byte)0xb5,
                 (byte)0xb1, (byte)0xe2, (byte)0x2d, (byte)0xfc, (byte)0xea,
                 (byte)0xa0, (byte)0x65, (byte)0xd7, (byte)0x63, (byte)0x21, (byte)0x67};
-            aesEncryption.createKey(keyBytes);
-            String plaintextAES = aesEncryption.decrypt(userInfor.getEncrypted());
-            System.out.println("decrypt: "+ plaintextAES);
-            if (plaintextAES.equals(userInfor.getPlaintext())){
+            aesEncryption.createKey(keyBytes);            
+            if (userInfor.isTruePassword()){
                 return new APIResult(200,"OK");
             }
             else return new APIResult(403,"false");
