@@ -34,40 +34,7 @@ public class AESEncryption {
         this.keyBytes = keyBytes;
         key = new SecretKeySpec(keyBytes, "AES");
     }
-
-    /*public byte[] encrypt(final byte[] plainText) {
-        try {
-
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-            return cipher.doFinal(plainText);
-        } catch (InvalidKeyException e) {
-            System.out.println(e.getMessage());
-            return null;
-        } catch (BadPaddingException e) {
-            System.out.println(e.getMessage());
-            return null;
-        } catch (IllegalBlockSizeException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-    }
-
-    public byte[] decrypt(final byte[] plainText) {
-        try {
-            cipher.init(Cipher.DECRYPT_MODE, key);
-            return cipher.doFinal(plainText);
-        } catch (InvalidKeyException e) {
-            System.out.println(e.getMessage());
-            return null;
-        } catch (BadPaddingException e) {
-            System.out.println(e.getMessage());
-            return null;
-        } catch (IllegalBlockSizeException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
-    }
-*/
+   
     public String encrypt(String plainText) {
         try {
 

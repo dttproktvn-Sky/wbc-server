@@ -9,7 +9,7 @@ import com.singalarity.wbc.server.models.AESEncryption;
 @RestController
 public class LoginController {
     @PostMapping("/wbcLogin")
-    public APIResult getConfig(@RequestBody UserInfo userInfor){
+    public APIResult doLogin(@RequestBody UserInfo userInfor){
         if (userInfor.getUid()!= null){
             System.out.println("UserId: "+userInfor.getUid());
             System.out.println("hassPassword: "+userInfor.getHashPassword());            
