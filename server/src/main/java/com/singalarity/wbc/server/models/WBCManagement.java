@@ -1,0 +1,88 @@
+package com.singalarity.wbc.server.models;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.security.SecureRandom;
+import cz.muni.fi.xklinec.whiteboxAES.WBCStringCryption;
+import cz.muni.fi.xklinec.whiteboxAES.AESEncryption;
+import cz.muni.fi.xklinec.whiteboxAES.generator.Generator;
+import cz.muni.fi.xklinec.whiteboxAES.generator.ExternalBijections;
+import cz.muni.fi.xklinec.whiteboxAES.WBCStringCryption;
+
+public class WBCManagement {
+    private byte[] AESKey =  new byte[16];
+    private boolean generateSuccessful = true;
+    private WBCStringCryption wbcStringEncryption;
+    public WBCManagement(){
+    
+    }
+    public WBCManagement(String deviceID){
+        generateAESKey();
+        if (generateSuccessful){
+            generateWBC();
+            if (generateSuccessful){
+                CreateFileWBC(deviceID);
+            }
+        }
+    }
+    private void generateAESKey(){
+        try{
+            byte[] byteArray = new byte[16];
+            SecureRandom random = new SecureRandom();
+            random.nextBytes(byteArray);
+            this.AESKey = byteArray;
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            this.generateSuccessful = false;
+        }
+        
+    }
+    private void generateWBC(){
+        try{
+            Generator gEnc = new Generator();      
+            ExternalBijections extc = new ExternalBijections();
+            gEnc.generateExtEncoding(extc, Generator.WBAESGEN_EXTGEN_ID);
+            gEnc.setUseIO04x04Identity(true);
+            gEnc.setUseIO08x08Identity(true);
+            gEnc.setUseMB08x08Identity(true);
+            gEnc.setUseMB32x32Identity(true);
+            gEnc.generate(true, AESKey, 16, extc);
+            this.wbcStringEncryption = new WBCStringCryption(gEnc.getAESi(), true);           
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            this.generateSuccessful = false;
+        }        
+    }
+    public void CreateFileWBC(String deviceID){
+        try{
+            FileOutputStream file = new FileOutputStream("wbcfile/"+deviceID+"DecryptionWBC");
+            ObjectOutputStream out = new ObjectOutputStream(file); 
+            out.writeObject(wbcStringEncryption);
+            out.close(); 
+            file.close();               
+            System.out.println("Object has been serialized");        
+            } catch(IOException e){
+                System.out.println("2. IOException is caught"); 
+                this.generateSuccessful = false;
+            }
+    }
+    public String byteToString(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        int length = bytes.length;
+        for (int i = 0; i < length; i++) {
+            sb.append(String.format("0x%02X", bytes[i] & 0xff));
+            if ((i + 1) != length) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+    public byte[] getAESKey(){
+        return this.AESKey;
+    }
+    public boolean getGenerateSuccessful(){
+        return this.generateSuccessful;
+    }
+
+}

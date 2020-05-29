@@ -6,12 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Base64;
+
 import javax.swing.text.html.parser.DTD;
 
 import com.singalarity.wbc.server.models.DatabaseConstrant;
-public class DatabaseQuery {
-    String sqlFindUser = "SELECT * FROM mobileUser WHERE username = ";
-    String connectionUrl = "jdbc:mysql://localhost:3306/db";
+public class DatabaseQuery {   
     public Connection conn;
     public DatabaseQuery() throws Exception {      
         try{
@@ -73,5 +73,48 @@ public class DatabaseQuery {
             System.out.println(e.getMessage());
             return false;            
         }        
+    }
+    public Boolean insertKeyAndDeviceID(String deviceID, byte[] AESKey){
+        ResultSet rs = null;
+        System.out.println(DatabaseConstrant.addDeviceIDAESKey);
+        String base64AESKey = Base64.getEncoder().encodeToString(AESKey);
+        try {
+            PreparedStatement ps = this.conn.prepareStatement(DatabaseConstrant.addDeviceIDAESKey);
+            ps.setString(1,deviceID);
+            ps.setString(2,base64AESKey);
+            int rowAffected = ps.executeUpdate();
+            if(rowAffected == 1){
+                rs = ps.getGeneratedKeys();
+                if (rs.next()){
+                    System.out.println(rs.getInt(1));
+                }
+                return true;
+            } else{
+                return false;
+            }
+        }catch (Exception e){
+
+        }
+        return false;
+    }
+    public byte[] getDeviceIDAESKey(String deviceID){
+        try {            
+            String findAESKeyQuery = DatabaseConstrant.findDeviceID + "'"+deviceID+"'";
+            System.out.println(findAESKeyQuery);            
+            PreparedStatement ps = this.conn.prepareStatement(findAESKeyQuery);             
+            ResultSet rs = ps.executeQuery(); 
+            System.out.println("excute");  
+            String base64AESKey="";    
+            while (rs.next()) {
+                base64AESKey = rs.getString("AESKey");                 
+                byte[] AESKey = Base64.getDecoder().decode(base64AESKey);
+                return AESKey;                                   
+            }             
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+        return null;
     }
 }
