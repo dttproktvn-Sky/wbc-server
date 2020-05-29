@@ -23,7 +23,7 @@ dependencies {
 	compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.65'
 	compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.19'
 	compile group: 'com.ea.async', name: 'ea-async', version: '1.2.1'
-
+	compile fileTree(include: ['*.jar'], dir: 'libs')
 }
 
 test {
