@@ -5,8 +5,8 @@ public class DatabaseConstrant {
     public static String dbName = "db";
     public static String dbUser = "user";
     public static String dbPassword = "password";
-    public static String findUserQuery = "SELECT * FROM mobileUser WHERE username =";
-    public static String addUserQuery = "INSERT INTO mobileUser (username,password) VALUES (?,?)";    
+    public static String findUserQuery = "SELECT * FROM mobileUsers WHERE username =";
+    public static String addUserQuery = "INSERT INTO mobileUsers (username,password) VALUES (?,?)";    
     public static String addDeviceIDAESKey = "INSERT INTO deviceIDAESKey (deviceID, AESKey) VALUES(?,?)";
     public static String findDeviceID = "SELECT * FROM deviceIDAESKey WHERE deviceID =";
 }

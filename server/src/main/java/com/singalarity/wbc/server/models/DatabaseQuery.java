@@ -9,9 +9,10 @@ import java.sql.Statement;
 import java.util.Base64;
 
 import javax.swing.text.html.parser.DTD;
+import java.io.Serializable;
 
 import com.singalarity.wbc.server.models.DatabaseConstrant;
-public class DatabaseQuery {   
+public class DatabaseQuery implements Serializable {   
     public Connection conn;
     public DatabaseQuery() throws Exception {      
         try{
@@ -31,15 +32,12 @@ public class DatabaseQuery {
     }
     public String getPasswordByUsername(String username) throws Exception {        
         try {            
-            String checkPasswordByUsernameQuerry = DatabaseConstrant.findUserQuery+"'"+ username+"'";
-            System.out.println(checkPasswordByUsernameQuerry);            
+            String checkPasswordByUsernameQuerry = DatabaseConstrant.findUserQuery+"'"+ username+"'";              
             PreparedStatement ps = this.conn.prepareStatement(checkPasswordByUsernameQuerry);             
-            ResultSet rs = ps.executeQuery(); 
-            System.out.println("excute");  
+            ResultSet rs = ps.executeQuery();           
             String password="Fail";    
             while (rs.next()) {
-                password = rs.getString("password");                 
-                System.out.println(password); 
+                password = rs.getString("password");
                 break;                   
             }   
             return password;         
