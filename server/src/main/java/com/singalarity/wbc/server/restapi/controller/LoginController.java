@@ -12,7 +12,7 @@ public class LoginController {
     @PostMapping("/wbcLogin")
     public APIResult doLogin(@RequestBody LoginRequest loginRequest){
         
-        boolean loginRequestValid = loginRequest.getValidationResult();
+        boolean loginRequestValid = loginRequest.checkDataValidation();
         if (!loginRequestValid){
             return new APIResult(404,"Login request is not valid");
         }
