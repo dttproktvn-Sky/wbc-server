@@ -73,8 +73,7 @@ public class DatabaseQuery implements Serializable {
         }        
     }
     public Boolean insertKeyAndDeviceID(String deviceID, byte[] AESKey){
-        ResultSet rs = null;
-        System.out.println(DatabaseConstrant.addDeviceIDAESKey);
+        ResultSet rs = null;      
         String base64AESKey = Base64.getEncoder().encodeToString(AESKey);
         try {
             PreparedStatement ps = this.conn.prepareStatement(DatabaseConstrant.addDeviceIDAESKey);
@@ -98,10 +97,10 @@ public class DatabaseQuery implements Serializable {
     public byte[] getDeviceIDAESKey(String deviceID){
         try {            
             String findAESKeyQuery = DatabaseConstrant.findDeviceID + "'"+deviceID+"'";
-            System.out.println(findAESKeyQuery);            
+            //System.out.println(findAESKeyQuery);            
             PreparedStatement ps = this.conn.prepareStatement(findAESKeyQuery);             
             ResultSet rs = ps.executeQuery(); 
-            System.out.println("excute");  
+            //System.out.println("excute");  
             String base64AESKey="";    
             while (rs.next()) {
                 base64AESKey = rs.getString("AESKey");                 

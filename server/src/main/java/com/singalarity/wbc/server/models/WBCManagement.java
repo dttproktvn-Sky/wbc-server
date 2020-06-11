@@ -21,10 +21,7 @@ public class WBCManagement {
     private boolean generateSuccessful = true;
     private WBCStringCryption wbcStringEncryption;
     private String wbcFileString;
-    public WBCManagement(){
-    
-    }
-    public WBCManagement(String deviceID){
+        public WBCManagement(String deviceID){
         generateAESKey();
         if (generateSuccessful){
             generateWBC();
@@ -32,8 +29,7 @@ public class WBCManagement {
                 CreateFileWBC(deviceID);
                 if (generateSuccessful){
                     ExtractWBCFile(deviceID);
-                }
-               
+                }               
             }
         }
     }
@@ -60,23 +56,8 @@ public class WBCManagement {
            // System.out.println(encoded);
             fis.close();
             //-------------------------------FINISH SERVER SIDE --------------------------------//
-            byte[] decodebytes = Base64.getDecoder().decode(encoded);
-            // Write To File
-            File someFile = new File("MobileFile");
-            FileOutputStream fos = new FileOutputStream(someFile);
-            fos.write(decodebytes);
-            fos.flush();
-            fos.close();
-
-            FileInputStream mobileFile = new FileInputStream("MobileFile"); 
-            ObjectInputStream mobileIn = new ObjectInputStream(mobileFile);
-           
-            WBCStringCryption deserializedWBCEnc = (WBCStringCryption) mobileIn.readObject();            
-            mobileFile.close(); 
-            mobileIn.close(); 
-
-
-        } catch(IOException | ClassNotFoundException e){
+            
+        } catch(IOException e){
             System.out.println(e.getMessage());
             this.generateSuccessful = false;
             return;

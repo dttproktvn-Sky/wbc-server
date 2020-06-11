@@ -12,35 +12,34 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AESEncryption {
 
-    byte[] keyBytes;
-    Cipher cipher;
-    SecretKeySpec key;
-
-    public AESEncryption() {
+    private byte[] keyBytes;
+    private Cipher cipher;
+    private SecretKeySpec key;
+    private String deviceID;
+    private boolean generateSuccess = false;
+    public AESEncryption(String deviceID) {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-
+        this.deviceID = deviceID;        
         try {
-            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding", "BC");
+            DatabaseQuery databaseQuery = new DatabaseQuery(); 
+            keyBytes = databaseQuery.getDeviceIDAESKey(deviceID);
+            key = new SecretKeySpec(keyBytes, "AES");
+            cipher = Cipher.getInstance("AES/ECB/PKCS5Padding", "BC");          
+            generateSuccess = true;
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e.getMessage());
         } catch (NoSuchPaddingException e) {
             System.out.println(e.getMessage());
         } catch (NoSuchProviderException e) {
             System.out.println(e.getMessage());
+        } catch (Exception e) {            
+            e.printStackTrace();
         }
-    }
-
-    public void createKey(final byte[] keyBytes) {
-        this.keyBytes = keyBytes;
-        key = new SecretKeySpec(keyBytes, "AES");
-    }
-   
+    }  
     public String encrypt(String plainText) {
         try {
-
             cipher.init(Cipher.ENCRYPT_MODE, key);
-            byte[] ciphertext= cipher.doFinal(plainText.getBytes());
-            
+            byte[] ciphertext= cipher.doFinal(plainText.getBytes());            
             return Base64.getEncoder().encodeToString(ciphertext);
         } catch (InvalidKeyException e) {
             System.out.println(e.getMessage());
@@ -54,8 +53,7 @@ public class AESEncryption {
         }
     }
     public String decrypt(String cipherText) {
-        try {
-
+        try {            
             cipher.init(Cipher.DECRYPT_MODE, key);
             byte[] plaintext = cipher.doFinal(Base64.getDecoder().decode(cipherText));
             return new String (plaintext);
@@ -69,5 +67,11 @@ public class AESEncryption {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+    public String getDeviceID(){
+        return deviceID;
+    }
+    public boolean getGenerateSuccessful(){
+        return generateSuccess;
     }
 }

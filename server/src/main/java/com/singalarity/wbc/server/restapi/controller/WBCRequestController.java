@@ -1,8 +1,5 @@
 package com.singalarity.wbc.server.restapi.controller;
 import org.springframework.web.bind.annotation.RestController;
-
-import cz.muni.fi.xklinec.whiteboxAES.AES;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.singalarity.wbc.server.restapi.apiResult.APIResult;
@@ -20,12 +17,9 @@ public class WBCRequestController {
             byte[] AESKey = null;
             try{
                 DatabaseQuery databaseQuery = new DatabaseQuery(); 
-                AESKey = databaseQuery.getDeviceIDAESKey(deviceID.getDeviceID());
-                
-                WBCManagement wbcManagement = new WBCManagement();
-                System.out.println(wbcManagement.byteToString(AESKey));
+                AESKey = databaseQuery.getDeviceIDAESKey(deviceID.getDeviceID());                
             }catch (Exception e){
-
+                System.out.println(e.getMessage());
             }
             if (AESKey == null){
                 WBCManagement wbcManagement = new WBCManagement(deviceID.getDeviceID());
