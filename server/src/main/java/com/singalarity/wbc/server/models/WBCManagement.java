@@ -1,5 +1,6 @@
 package com.singalarity.wbc.server.models;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.SecureRandom;
 import java.util.Base64;
-
 import cz.muni.fi.xklinec.whiteboxAES.WBCStringCryption;
 import cz.muni.fi.xklinec.whiteboxAES.AESEncryption;
 import cz.muni.fi.xklinec.whiteboxAES.generator.Generator;
@@ -21,17 +21,32 @@ public class WBCManagement {
     private boolean generateSuccessful = true;
     private WBCStringCryption wbcStringEncryption;
     private String wbcFileString;
-        public WBCManagement(String deviceID){
-        generateAESKey();
-        if (generateSuccessful){
-            generateWBC();
-            if (generateSuccessful){
-                CreateFileWBC(deviceID);
-                if (generateSuccessful){
-                    ExtractWBCFile(deviceID);
-                }               
-            }
+    
+    public WBCManagement(String deviceID){   
+        try{
+            DatabaseQuery databaseQuery = new DatabaseQuery(); 
+            AESKey = databaseQuery.getDeviceIDAESKey(deviceID);  
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            generateSuccessful = false;
         }
+        if (AESKey == null){
+            generateAESKey();
+            if (generateSuccessful){
+                generateWBC();
+                if (generateSuccessful){
+                    CreateFileWBC(deviceID);
+                    if (generateSuccessful){
+                        ExtractWBCFile(deviceID);
+                    }               
+                }
+            }
+        } else{
+            getGeneratedWBC(deviceID);
+        }
+        
+        
+        
     }
     public void ExtractWBCFile(String deviceID){
         try{
@@ -61,8 +76,31 @@ public class WBCManagement {
             System.out.println(e.getMessage());
             this.generateSuccessful = false;
             return;
-        }
-        
+        }        
+    }
+    private void getGeneratedWBC(String deviceID){
+            try{
+                FileInputStream fis = new FileInputStream("wbcfile/"+deviceID+"EncryptionWBC"); 
+                ObjectInputStream ois = new ObjectInputStream(fis);           
+                wbcStringEncryption = (WBCStringCryption) ois.readObject();  
+                             
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                byte[] buf = new byte[1024];               
+                for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                    bos.write(buf, 0, readNum); //no doubt here is 0
+                    //Writes len bytes from the specified byte array starting at offset off to this byte array output stream.
+                }    
+                System.out.println("aaaaaaaaaaaaaaaa");             
+                byte[] bytes = bos.toByteArray();
+                String encoded = Base64.getEncoder().encodeToString(bytes);
+                this.wbcFileString = encoded;
+                ois.close(); 
+                fis.close();
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+                generateSuccessful = false;
+            }
+            
     }
     private void generateAESKey(){
         try{
@@ -116,6 +154,7 @@ public class WBCManagement {
         }
         return sb.toString();
     }
+    
     public byte[] getAESKey(){
         return this.AESKey;
     }
