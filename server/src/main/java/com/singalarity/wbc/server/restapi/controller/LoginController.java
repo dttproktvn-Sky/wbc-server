@@ -1,6 +1,7 @@
 package com.singalarity.wbc.server.restapi.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import com.singalarity.wbc.server.restapi.apiResult.APIResult;
@@ -22,5 +23,9 @@ public class LoginController {
         }
         else return new APIResult(403,"false");               
     }
+    @GetMapping("/hello")
+    public String sayHello(){
+        return "Hello";
+    }    
     
 }
